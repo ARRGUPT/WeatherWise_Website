@@ -53,12 +53,14 @@ def get_advice(humidity, temperature, wind_speed, rainfall):
 def home():
     return jsonify({"msg": "Server is live"})
 
+
 # POST route for predictions
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
         # Parse input JSON data
         data = request.get_json(force=True)
+        app.logger.debug(f"Received data: {data}")
         humidity = data['humidity']
         temperature = data['temperature']
         wind_speed = data['wind_speed']
