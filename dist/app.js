@@ -33,7 +33,7 @@ form.addEventListener("submit", async (event) => {
       body: JSON.stringify({
         temperature: parseFloat(temperature),
         rainfall: parseFloat(rainfall),
-        windSpeed: parseFloat(windSpeed),
+        wind_speed: parseFloat(windSpeed),
         humidity: parseFloat(humidity),
       }),
     });

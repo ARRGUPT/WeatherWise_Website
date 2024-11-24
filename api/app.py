@@ -7,7 +7,8 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
+CORS(app, resources={r"/*": {"origins": "https://weatherwise-website.onrender.com/"}})
+
 
 
 # Load the pre-trained models and encoders
@@ -67,7 +68,7 @@ def predict():
         advice_text = get_advice(humidity, temperature, wind_speed, rainfall)
 
         # Return the response as JSON
-        return jsonify({'Advice': advice_text})
+        return jsonify({'advice': advice_text})
     except Exception as e:
         # Handle exceptions and return error message
         return jsonify({'error': str(e)}), 500
