@@ -1,20 +1,45 @@
-from pyngrok import ngrok, conf
 from flask import Flask, request, jsonify
+import pickle
+import pandas as pd
+import numpy as np
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
-# print("Enter your authtoken, which can be copied from https://dashboard.ngrok.com/get-started/your-authtoken")
-conf.get_default().auth_token = '2oQp2VUXGtWILvfWSAlmYXLZxNo_47R1erFFXMmnvJAQbs33H'
-
+# Load the pre-trained models and encoders
+with open('./models/knn_model.pkl', 'rb') as model_file:
+    knn_loaded = pickle.load(model_file)
+with open('./models/scaler.pkl', 'rb') as scaler_file:
+    scaler_loaded = pickle.load(scaler_file)
+with open('./models/encoder.pkl', 'rb') as encoder_file:
+    encoder_loaded = pickle.load(encoder_file)
 
 app = Flask(__name__)
 
-port = "5000"
+def get_advice(humidity, temperature, wind_speed, rainfall):
+    # Prepare the input data
+    input_data = pd.DataFrame(
+        [[humidity, temperature, wind_speed, rainfall]],
+        columns=['Humidity (%)', 'Temperature (°C)', 'Wind Speed (km/h)', 'Rainfall (mm)']
+    )
+    # Scale the input data
+    input_scaled = scaler_loaded.transform(input_data)
 
-# Open a ngrok tunnel to the HTTP server
-public_url = ngrok.connect(port).public_url
-print(f" * ngrok tunnel \"{public_url}\" -> \"http://127.0.0.1:{port}\"")
+    # Get prediction
+    prediction = knn_loaded.predict(input_scaled)
 
-# Update any base URLs to use the public ngrok URL
-app.config["BASE_URL"] = public_url
+    # Handle different prediction formats
+    if len(prediction.shape) == 1:  # Single label prediction
+        advice_index = prediction[0]
+    else:  # One-hot encoded prediction
+        advice_index = np.argmax(prediction)
+
+    try:
+        # Retrieve advice text using the encoder
+        advice_text = encoder_loaded.categories_[0][advice_index]
+    except IndexError:
+        print("Error: Advice index out of range.")
+        advice_text = "Unknown advice. Check your data and model."
+
+    return advice_text
 
 # GET route for server status check
 @app.route('/', methods=['GET'])
@@ -24,21 +49,25 @@ def home():
 # POST route for predictions
 @app.route('/predict', methods=['POST'])
 def predict():
-    data = request.get_json(force=True)
-    humidity = data['humidity']
-    temperature = data['temperature']
-    wind_speed = data['wind_speed']
-    rainfall = data['rainfall']
+    try:
+        # Parse input JSON data
+        data = request.get_json(force=True)
+        humidity = data['humidity']
+        temperature = data['temperature']
+        wind_speed = data['wind_speed']
+        rainfall = data['rainfall']
 
-    advice_text = get_advice(humidity, temperature, wind_speed, rainfall)
-    print(advice_text)
+        # Get advice based on the input data
+        advice_text = get_advice(humidity, temperature, wind_speed, rainfall)
 
-    return jsonify({'Advice': advice_text})
+        # Return the response as JSON
+        return jsonify({'Advice': advice_text})
+    except Exception as e:
+        # Handle exceptions and return error message
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    try:
-      public_url = ngrok.connect(port).public_url
-      print(public_url)
-      app.run(port=port)
-    finally:
-      ngrok.disconnect(public_url)
+    import os
+    # Dynamically set the port for deployment
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
