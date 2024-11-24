@@ -4,6 +4,12 @@ import pandas as pd
 import numpy as np
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
+from flask_cors import CORS
+
+app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
+
+
 # Load the pre-trained models and encoders
 with open('./models/knn_model.pkl', 'rb') as model_file:
     knn_loaded = pickle.load(model_file)
