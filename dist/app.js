@@ -25,7 +25,7 @@ form.addEventListener("submit", async (event) => {
 
   try {
     // Simulated API call (replace with your API URL)
-    const response = await fetch("https://7e8c-34-83-105-230.ngrok-free.app/predict", {
+    const response = await fetch("https://weatherwise-api.onrender.com/predict", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
