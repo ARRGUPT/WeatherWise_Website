@@ -12,7 +12,13 @@ form.addEventListener("submit", async (event) => {
   const windSpeed = form.querySelector("input[placeholder='Enter Wind Speed (in km/h)']").value;
   const humidity = form.querySelector("input[placeholder='Enter Humidity (in %)']").value;
 
-  // Validate inputs
+  // Call the async function
+  await fetchAndDisplayAdvice(temperature, rainfall, windSpeed, humidity);
+});
+
+async function fetchAndDisplayAdvice(temperature, rainfall, windSpeed, humidity) {
+  console.log({ temperature, rainfall, windSpeed, humidity });
+
   if (!temperature || !rainfall || !windSpeed || !humidity) {
     adviceDisplay.textContent = "Please fill in all fields.";
     adviceDisplay.style.color = "red";
@@ -39,7 +45,7 @@ form.addEventListener("submit", async (event) => {
     });
 
     // Parse response
-    if (response) {
+    if (response.ok) {
       const data = await response.json();
       adviceDisplay.textContent = data.advice || "No advice available.";
       adviceDisplay.style.color = "green";
@@ -50,4 +56,4 @@ form.addEventListener("submit", async (event) => {
     adviceDisplay.textContent = "Error: Unable to fetch advice.";
     adviceDisplay.style.color = "red";
   }
-});
+}

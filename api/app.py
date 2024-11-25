@@ -4,10 +4,17 @@ import pandas as pd
 import numpy as np
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
+# from flask_cors import CORS
+
+# app = Flask(__name__)
+# CORS(app, resources={r"/*": {"origins": "https://weatherwise-website.onrender.com/"}})
+from flask import Flask
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "https://weatherwise-website.onrender.com/"}})
+
+# Allow requests from localhost (127.0.0.1) for local development
+CORS(app, resources={r"/*": {"origins": ["http://127.0.0.1:5500", "https://weatherwise-website.onrender.com"]}})
 
 
 
