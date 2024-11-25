@@ -33,7 +33,7 @@
         <div
           class="w-full bg-gradient-to-br from-[rgba(255,255,255,0.1)] to-[rgba(255,255,255,0)] backdrop-blur-[10px] border border-[rgba(255,255,255,0.18)] rounded-3xl shadow-lg mt-6 p-6"
         >
-          <form action="" class="space-y-4">
+          <form onsubmit="return handleFormSubmission(event)" class="space-y-4">
             <!-- Temperature and Rainfall -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <input
@@ -66,7 +66,7 @@
             <div class="flex justify-center">
               <button
                 type="submit"
-                onclick="fetchAndDisplayAdvice()"
+                
                 class="px-6 py-2 bg-blue-500 text-yellow-400 font-bold rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
               >
                 Advice

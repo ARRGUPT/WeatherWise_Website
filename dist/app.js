@@ -3,8 +3,21 @@ const form = document.querySelector("form");
 const adviceDisplay = document.querySelector(".border p");
 
 // Event listener for form submission
-form.addEventListener("submit", async (event) => {
-  event.preventDefault(); // Prevent the default form submission behavior
+// form.addEventListener("submit", async (event) => {
+//   event.preventDefault(); // Prevent the default form submission behavior
+
+//   // Get values from input fields
+//   const temperature = form.querySelector("input[placeholder='Enter Temperature (in °C)']").value;
+//   const rainfall = form.querySelector("input[placeholder='Enter Rainfall (in mm)']").value;
+//   const windSpeed = form.querySelector("input[placeholder='Enter Wind Speed (in km/h)']").value;
+//   const humidity = form.querySelector("input[placeholder='Enter Humidity (in %)']").value;
+
+//   // Call the async function
+//   await fetchAndDisplayAdvice(temperature, rainfall, windSpeed, humidity);
+// });
+function handleFormSubmission(event) {
+  event.preventDefault(); // Prevent default form submission
+  const form = event.target;
 
   // Get values from input fields
   const temperature = form.querySelector("input[placeholder='Enter Temperature (in °C)']").value;
@@ -12,30 +25,25 @@ form.addEventListener("submit", async (event) => {
   const windSpeed = form.querySelector("input[placeholder='Enter Wind Speed (in km/h)']").value;
   const humidity = form.querySelector("input[placeholder='Enter Humidity (in %)']").value;
 
-  // Call the async function
-  await fetchAndDisplayAdvice(temperature, rainfall, windSpeed, humidity);
-});
+  // Call your function
+  fetchAndDisplayAdvice(temperature, rainfall, windSpeed, humidity);
+}
+
 
 async function fetchAndDisplayAdvice(temperature, rainfall, windSpeed, humidity) {
-  console.log({ temperature, rainfall, windSpeed, humidity });
-
   if (!temperature || !rainfall || !windSpeed || !humidity) {
     adviceDisplay.textContent = "Please fill in all fields.";
     adviceDisplay.style.color = "red";
     return;
   }
 
-  // Show loading message
   adviceDisplay.textContent = "Fetching advice...";
   adviceDisplay.style.color = "gray";
 
   try {
-    // Simulated API call (replace with your API URL)
     const response = await fetch("https://weatherwise-api.onrender.com/predict", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         temperature: parseFloat(temperature),
         rainfall: parseFloat(rainfall),
@@ -44,7 +52,6 @@ async function fetchAndDisplayAdvice(temperature, rainfall, windSpeed, humidity)
       }),
     });
 
-    // Parse response
     if (response.ok) {
       const data = await response.json();
       adviceDisplay.textContent = data.advice || "No advice available.";
