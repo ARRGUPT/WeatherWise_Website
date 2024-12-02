@@ -9,7 +9,7 @@ from flask_cors import CORS
 app = Flask(__name__)
 
 # Allow requests from localhost (127.0.0.1) for local development
-CORS(app, resources={r"/*": {"origins": ["http://127.0.0.1:5500", "https://weatherwise-api.onrender.com/predict"]}})
+CORS(app)
 
 
 
