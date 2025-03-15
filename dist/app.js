@@ -42,6 +42,7 @@ async function fetchAndDisplayAdvice(temperature, rainfall, windSpeed, humidity)
 
   try {
     const response = await fetch("https://weatherwise-api.onrender.com/predict", {
+      mode: "no-cors",
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
